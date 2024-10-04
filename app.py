@@ -1,11 +1,12 @@
-import os
 import re #regix
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from dotenv import load_dotenv
-from object_storage_service import StorageService
-from database_service import DatabaseService
+from Services.object_storage_service import StorageService
+from Services.database_service import DatabaseService
+from Services.RabbitMQService import RabbitMQ
+import json
 
 app = Flask(__name__)
 
@@ -18,6 +19,15 @@ db = SQLAlchemy(app)
 datebase = DatabaseService(db)
 object_storage = StorageService()
 
+#RabbitMQ
+rabbitMQ = RabbitMQ("amqps://smgwtkdg:Y8AXDjrQNmSewjQS_5ZFzqKral6c1UKd@hummingbird.rmq.cloudamqp.com/smgwtkdg")
+
+@app.route('/rabbitmq', methods=['GET'])
+def rabbitMQ_test():
+    message = rabbitMQ.receiveMessage("test_queue")
+    return message
+
+
 def is_valid_email(email):
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     if re.match(email_regex, email):
@@ -25,16 +35,14 @@ def is_valid_email(email):
     else:
         return False
 
-
 @app.route('/db' , methods=['GET'])
 def dbtest():
-    response = datebase.create_requests_table()
+    response = datebase.get_request_by_id(4)
     print(response)
     return jsonify(f"{response}")
 
-
 @app.route('/request', methods=['POST'])
-def upload_file():
+def sendRequest():
     if 'file' not in request.files:
         return "Please Provide an Image!"    
     
@@ -49,11 +57,21 @@ def upload_file():
 
 
     if file:
-        file.save(file.filename)
-        return 'uploaded'
+        response = datebase.insert_request(email, "pending")
+        print(response)
+        
+        if "ID" in response:
+            id = response["ID"]
+            object_storage.upload_file(file, f"{id}.jpg")
 
+            rabbitMQ.sendMessage("test_queue", str(id))  #send ID to rabbitMQ
+            
+            return f"Request from {email} inserted successfully with ID: {id}"
+        else:
+            return "Failed to insert the request."
+    
     else:
-        return "not allowed"
+        return "Unsuccessfully"
     
 
 
