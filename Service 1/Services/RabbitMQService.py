@@ -33,3 +33,5 @@ class RabbitMQ:
         connection.close()
         
         return message
+    
+    

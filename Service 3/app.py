@@ -1,11 +1,8 @@
 import re #regix
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
-from dotenv import load_dotenv
 from Services.object_storage_service import StorageService
 from Services.database_service import DatabaseService
-from Services.RabbitMQService import RabbitMQ
 import json
 
 app = Flask(__name__)
@@ -19,14 +16,12 @@ db = SQLAlchemy(app)
 datebase = DatabaseService(db)
 object_storage = StorageService()
 
-#RabbitMQ
-rabbitMQ = RabbitMQ("amqps://smgwtkdg:Y8AXDjrQNmSewjQS_5ZFzqKral6c1UKd@hummingbird.rmq.cloudamqp.com/smgwtkdg")
 
 @app.route('/rabbitmq', methods=['GET'])
 def rabbitMQ_test():
-    message = rabbitMQ.receiveMessage("test_queue")
+    #message = rabbitMQ.receiveMessage("test_queue")
+    message = "HIIIIIIII"
     return message
-
 
 def is_valid_email(email):
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -55,7 +50,6 @@ def sendRequest():
     if file.filename == '':
         return "NO selected file"
 
-
     if file:
         response = datebase.insert_request(email, "pending")
         print(response)
@@ -63,8 +57,6 @@ def sendRequest():
         if "ID" in response:
             id = response["ID"]
             object_storage.upload_file(file, f"{id}.jpg")
-
-            rabbitMQ.sendMessage("test_queue", str(id))  #send ID to rabbitMQ
             
             return f"Request from {email} inserted successfully with ID: {id}"
         else:
@@ -81,5 +73,5 @@ def getRequestId(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5002, debug=True)
 

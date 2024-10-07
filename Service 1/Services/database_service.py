@@ -1,9 +1,7 @@
 from sqlalchemy import text
-from flask_sqlalchemy import SQLAlchemy
-import json
 
 class DatabaseService:
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, db):
         self.db = db
 
     def create_requests_table(self):
@@ -22,12 +20,6 @@ class DatabaseService:
     
         return "Table created successfully"
 
-
-    def remove_requests_table(self):
-        remove_table_query = text("DROP TABLE IF EXISTS Requests;")
-        self.db.session.execute(remove_table_query)
-        self.db.session.commit()
-        return "Requests table removed."
 
     def show_tables(self):
         result = self.db.session.execute(text("SHOW TABLES"))
