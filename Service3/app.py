@@ -6,6 +6,7 @@ from Services import text_to_image
 from Services import mail_service
 import io
 
+
 def text_to_image_API(id, caption, email):
     image_bytes = text_to_image.call_api(caption)
     image_name = f"{id}_generated.jpg"
