@@ -57,5 +57,3 @@ class DatabaseService:
         else:
             return None
         
-
-    

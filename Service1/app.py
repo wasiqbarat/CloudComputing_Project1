@@ -16,11 +16,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 datebase = DatabaseService(db)
 
-@app.route('/rabbitmq', methods=['GET'])
-def rabbitMQ_test():
-    message = rabbitMQ.receive_content_of_rabbitMQ()
-    return "true"
-
 
 def is_valid_email(email):
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -28,16 +23,10 @@ def is_valid_email(email):
         return True
     else:
         return False
+    
 
-
-@app.route('/mq', methods=['GET'])
-def getlist():
-    resoponse = object_storage_service.download_file("5.jpg")
-    return resoponse
-
-
-@app.route('/request', methods=['POST'])
-def sendRequest():
+@app.route('/newrequest', methods=['POST'])
+def newRequest():
     if 'file' not in request.files:
         return "Please Provide an Image!"    
     
@@ -68,12 +57,14 @@ def sendRequest():
         return "Unsuccessfully"
     
 
-
 @app.route('/status/<id>', methods=['GET'])
-def getRequestId(id):
-    req_args = request.view_args
-
-
+def getRequestId(id):    
+    request_status = datebase.get_request_by_id(id)
+    if request_status[2] == 'done':
+        return f"{request_status[4]}"
+    else:
+        return "under review..."
+ 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
 

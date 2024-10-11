@@ -15,7 +15,6 @@ def text_to_image_API(id, caption, email):
 
     print(response)
 
-
     image_url = object_storage_service.generate_presigned_url(image_name)
     print(image_url)
 
