@@ -1,95 +1,71 @@
 import mysql.connector
+import os
+from dotenv import load_dotenv
 
-class Database():
-    host = 'tai.liara.cloud'          
-    port = 34424
-    user = 'root'
-    password = 'r03LTfZ5eZ4bDhZuBaZY6xYv'
-    database = 'condescending_aryabhata'
+load_dotenv()
 
-    def query_liara_database(self):
-        try:
-            connection = mysql.connector.connect(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
-                database=self.database
-            )
+host = os.getenv("DB_HOST")      
+port = os.getenv("DB_PORT")
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+database = os.getenv("DB_NAME")
 
-            cursor = connection.cursor()
+def updateStatus(id, status):
+    try:
+        connection = mysql.connector.connect(
+        host=host,
+        port=port,
+        user=user,
+        password=password,
+        database=database
+        )
+
+        cursor = connection.cursor()
             
-            query = f"SELECT * FROM Requests;"
-            cursor.execute(query)
+        query = f"UPDATE Requests SET status = '{status}' WHERE id = {id}"
+        cursor.execute(query)
+        connection.commit()
 
-            results = cursor.fetchall()
+        connection.close()
+        return "Status Updated!"
 
-            for row in results:
-                print(row)
-
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
-
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
-                
-    def updateCaption(self, id, image_caption):
-        try:
-            connection = mysql.connector.connect(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
-                database=self.database
-            )
-
-            cursor = connection.cursor()
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
             
-            query = f"UPDATE Requests SET ImageCaption = '{image_caption}' WHERE id = {id}"
-            cursor.execute(query)
-            connection.commit()
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
 
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
+def updateCaption(id, caption):
+    try:
+        connection = mysql.connector.connect(
+        host=host,
+        port=port,
+        user=user,
+        password=password,
+        database=database
+        )
+
+        cursor = connection.cursor()
             
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
+        query = f"UPDATE Requests SET ImageCaption = '{caption}' WHERE id = {id}"
+        cursor.execute(query)
+        connection.commit()
+
+        connection.close()
+        return "caption Updated!"
+
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+            
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
 
     
-    def updateStatus(self, id, status):
-        try:
-            connection = mysql.connector.connect(
-                host=self.host,
-                port=self.port,
-                user=self.user,
-                password=self.password,
-                database=self.database
-            )
 
-            cursor = connection.cursor()
-            
-            query = f"UPDATE Requests SET status = '{status}' WHERE id = {id}"
-            cursor.execute(query)
-            connection.commit()
-
-        except mysql.connector.Error as err:
-            print(f"Error: {err}")
-            
-        finally:
-            if cursor:
-                cursor.close()
-            if connection:
-                connection.close()
-                
-
-if __name__ == "__main__":
-    db = Database()
-    #db.updateStatus(6, 'Rea')
-    db.query_liara_database()
-    #db.updateCaption(6, "this is a caption")

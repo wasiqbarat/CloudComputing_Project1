@@ -38,35 +38,6 @@ def updateImageURL(id, url):
             connection.close()
 
 
-def query_liara_database():
-    try:
-        connection = mysql.connector.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database
-        )
-
-        cursor = connection.cursor()
-            
-        query = f"SELECT * FROM Requests;"
-        cursor.execute(query)
-
-        results = cursor.fetchall()
-
-        for row in results:
-            print(row)
-
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
-                
 def updateStatus(id, status):
     try:
         connection = mysql.connector.connect(
@@ -95,6 +66,7 @@ def updateStatus(id, status):
         if connection:
             connection.close()
     
+#Returns all Requests with 'Ready' status  
 def checkRequestsStatus():
     try:
         connection = mysql.connector.connect(
@@ -111,11 +83,9 @@ def checkRequestsStatus():
         cursor.execute(query)
             
         results = cursor.fetchall()
-        #print(results)
-            
-        #print(results[0][1])
-        for row in results:
-            print(row)
+        
+        # for row in results:
+        #     print(row)
 
         connection.close()
         return results
@@ -129,6 +99,8 @@ def checkRequestsStatus():
         if connection:
             connection.close()
 
+
+#returns email by id
 def getEmail(id):
     try:
         connection = mysql.connector.connect(
@@ -145,11 +117,9 @@ def getEmail(id):
         cursor.execute(query)
             
         results = cursor.fetchall()
-        #print(results)
             
-        #print(results[0][1])
-        for row in results:
-            print(row)
+        # for row in results:
+        #     print(row)
 
         connection.close()
         return results
@@ -164,14 +134,9 @@ def getEmail(id):
             connection.close()
 
 
-if __name__ == "__main__":
-    query_liara_database()
-    #db.checkRequestsStatus()
-    #db.updateCaption(6, "this is a caption")
-    #res = db.updateImageURL(4, "wwww wasasdfasdfas")
-    #print(res)
-    #print("yes")
-    #db.updateStatus(4, 'done')
-    #db.checkRequestsStatus()
+# if __name__ == "__main__":
+#     #db.checkRequestsStatus()
+#     #db.updateCaption(6, "this is a caption")
+#     #db.checkRequestsStatus()
     
 

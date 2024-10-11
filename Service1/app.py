@@ -41,7 +41,6 @@ def newRequest():
 
     if file:
         response = datebase.insert_request(email, "pending")
-        print(response)
         
         if "ID" in response:
             id = response["ID"]
@@ -64,6 +63,7 @@ def getRequestId(id):
         return f"{request_status[4]}"
     else:
         return "under review..."
+ 
  
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

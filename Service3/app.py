@@ -14,19 +14,14 @@ def text_to_image_API(id, caption, email):
     #Uploade AI generated image to Storage server
     response = object_storage_service.upload_file(io.BytesIO(image_bytes), image_name)
 
-    print(response)
-
     image_url = object_storage_service.generate_presigned_url(image_name)
-    print(image_url)
 
     if response['message'] == "File uploaded successfully.":
-        response1 = database_service.updateImageURL(id, image_url['message'])
-        response2 = database_service.updateStatus(id, 'done')
+        database_service.updateImageURL(id, image_url['message'])
+        database_service.updateStatus(id, 'done')
 
         #Send email to the User
         mail_service.sendMail(id, email, image_url)
-        
-        print(response1, response2)
         return
     else:
         print("DB error")
@@ -40,13 +35,11 @@ def check_dB_requests_status():
         id = readyRequests[0][0]
         caption = readyRequests[0][3]
         email = readyRequests[0][1]
-
-        print(id, caption)
-        print("before text to image")
         text_to_image_API(id, caption, email)
     return
     
 schedule.every(3).seconds.do(check_dB_requests_status)
+print("Checking...")
 
 def main():
     while True:

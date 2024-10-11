@@ -1,8 +1,12 @@
 import requests
 import json
+from dotenv import load_dotenv
+import os
 
-API_URL = "https://api-inference.huggingface.co/models/kothariyashhh/GenAi-Texttoimage"
-headers = {"Authorization": "Bearer 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"}
+load_dotenv()
+
+API_URL = os.getenv('TEXT_TO_IMAGE_API_URL')
+headers = {"Authorization": f"Bearer {os.getenv('TEXT_TO_IMAGE_API_TOKEN')}"}
 
 def call_api(text):
     response = requests.post(API_URL, headers=headers, json=text)

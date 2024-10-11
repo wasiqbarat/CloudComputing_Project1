@@ -39,6 +39,5 @@ def sendMail(id, email, image_url):
     mailer.set_plaintext_content("This is the text content", mail_body)
     mailer.set_reply_to(reply_to, mail_body)
 
-    # using print() will also return status code and data
     print(mailer.send(mail_body))
 
