@@ -12,6 +12,7 @@ def send_to_rabbitMQ(num):
     channel.queue_declare(queue='requests_queue')
     channel.basic_publish(exchange='', routing_key='requests_queue', body=str(num))
 
+
 def receive_content_of_rabbitMQ():
     channel.queue_declare(queue='requests_queue')
 
@@ -22,8 +23,6 @@ def receive_content_of_rabbitMQ():
 
     print("Waiting for messages. To exit, press CTRL+C")
     channel.start_consuming()
-
-    connection.close()
 
 
 

@@ -1,9 +1,10 @@
 import pika
 import requests
 import os
+import io
 from dotenv import load_dotenv
 from Services import object_storage_service
-from Services import database_service 
+from Services import database_service
 
 load_dotenv()
 
@@ -26,12 +27,14 @@ def receive_content_of_rabbitMQ():
 
 def image_to_text_API(id):
         object_storage_service.download_file(f"{id}.jpg")
-
+    
         API_URL = os.getenv('IMAGE_TO_TEXT_API_URL')
-
         headers = {"Authorization": f"Bearer {os.getenv('IMAGE_TO_TEXT_API_TOKEN')}"}
 
-        with open(f"{id}.jpg", "rb") as f:
+        filename = f"{id}.jpg"
+        file_path = os.path.join(os.getcwd(), 'downloads', filename)
+        
+        with open(file_path, "rb") as f:
             data = f.read()
             
         response = requests.post(API_URL, headers=headers, data=data)
@@ -44,4 +47,3 @@ def image_to_text_API(id):
 
 receive_content_of_rabbitMQ()    
 print('Keyboard Interrupted')
-

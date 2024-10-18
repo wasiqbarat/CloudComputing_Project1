@@ -25,7 +25,13 @@ def upload_file(file, filename):
 
 def download_file(filename):
     try:
-        s3.download_file(bucket_name, filename, filename)
+        download_folder = os.path.join(os.getcwd(), 'downloads')
+        os.makedirs(download_folder, exist_ok=True)
+        local_file_path = os.path.join(download_folder, filename)
+        
+        s3.download_file(bucket_name, filename, local_file_path)
+        print("success")
+
     except NoCredentialsError:
         return {"message": "Liara credentials not found."}
     except Exception as e:

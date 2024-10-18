@@ -4,18 +4,21 @@ from flask_sqlalchemy import SQLAlchemy
 from Services import object_storage_service
 from Services.database_service import DatabaseService
 from Services import rabbitMQ
+import pymysql
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+pymysql.install_as_MySQLdb()
 
 app = Flask(__name__)
 
-# Configuring SQLAlchemy database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    "mysql://root:r03LTfZ5eZ4bDhZuBaZY6xYv@tai.liara.cloud:34424/condescending_aryabhata"
-)
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.getenv('SQLALCHEMY_DATABASE_URI'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 datebase = DatabaseService(db)
-
 
 def is_valid_email(email):
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -55,6 +58,7 @@ def newRequest():
     else:
         return "Unsuccessfully"
     
+    
 
 @app.route('/status/<id>', methods=['GET'])
 def getRequestId(id):    
@@ -66,6 +70,6 @@ def getRequestId(id):
  
  
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0")
 
 

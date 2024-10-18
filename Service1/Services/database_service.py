@@ -26,6 +26,7 @@ class DatabaseService:
         tables = [row[0] for row in result]
         return tables
 
+
     def insert_request(self, email, status, image_caption=None, new_image_url=None):
         insert_query = text("""
             INSERT INTO Requests (email, status, ImageCaption, newImageURL)

@@ -10,7 +10,6 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 database = os.getenv("DB_NAME")
 
-
 def updateImageURL(id, url):
     try:
         connection = mysql.connector.connect(
@@ -86,18 +85,11 @@ def checkRequestsStatus():
         
         # for row in results:
         #     print(row)
-
-        connection.close()
         return results
             
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-            
-    finally:
-        if cursor:
-            cursor.close()
-        if connection:
-            connection.close()
+
 
 
 #returns email by id
